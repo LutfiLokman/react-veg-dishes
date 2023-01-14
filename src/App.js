@@ -1,6 +1,9 @@
-import React from "react";
-import BarChart from "./BarChart";
+import React, { useEffect, useState } from "react";
+
+import axios from "axios";
+
 import "./App.css";
+import BarChart from "./BarChart";
 
 const data = [
   { year: 1980, efficiency: 24.3, sales: 8949000 },
@@ -36,6 +39,19 @@ const data = [
 ];
 
 function App() {
+  const [realData, setRealData] = useState();
+
+  useEffect(() => {
+    async function fetchData() {
+      const { data } = await axios.get("/order/dish_stats/");
+      setRealData(data);
+    }
+
+    fetchData();
+  }, []);
+
+  console.log(realData);
+
   return (
     <div className="App">
       <header className="App-header">
