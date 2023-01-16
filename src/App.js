@@ -1,10 +1,8 @@
-import React, { useEffect, useRef } from "react";
-
-import * as d3 from "d3";
+import "./App.css";
 
 import axios from "axios";
-
-import "./App.css";
+import * as d3 from "d3";
+import React, { useEffect, useRef } from "react";
 
 function App() {
   const svgRef = useRef();
@@ -48,7 +46,7 @@ function App() {
           .append("rect")
           .attr("width", x.bandwidth)
           .attr("height", (d) => graphHeight - y(d.count))
-          .attr("fill", "orange")
+          .attr("fill", "steelblue")
           .attr("x", (d) => x(d.dishes))
           .attr("y", (d) => y(d.count));
 
@@ -63,7 +61,6 @@ function App() {
 
         xAxisGroup
           .selectAll("text")
-          .attr("fill", "orange")
           .attr("transform", "rotate(-40)")
           .attr("text-anchor", "end");
       });
@@ -73,8 +70,8 @@ function App() {
   }, []);
 
   return (
-    <div classdishes="App">
-      <header classdishes="App-header">
+    <div className="App">
+      <header className="App-header">
         <svg
           ref={svgRef}
           style={{
