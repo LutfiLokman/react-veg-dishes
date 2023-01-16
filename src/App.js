@@ -1,7 +1,8 @@
+import "./App.css";
+
 import axios from "axios";
 import * as d3 from "d3";
 import React, { useEffect, useRef } from "react";
-import "./App.css";
 
 function App() {
   const svgRef = useRef();
