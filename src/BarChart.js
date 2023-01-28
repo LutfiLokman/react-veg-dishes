@@ -6,9 +6,9 @@ import { useD3 } from "./hooks/useD3";
 function BarChart({ data }) {
   const ref = useD3(
     (svg) => {
-      const height = 300;
-      const width = 400;
-      const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+      const margin = { top: 20, right: 20, bottom: 100, left: 100 };
+      const height = 600 - margin.top - margin.bottom;
+      const width = 600 - margin.left - margin.right;
 
       const x = d3
         .scaleBand()
@@ -16,33 +16,29 @@ function BarChart({ data }) {
         .rangeRound([margin.left, width - margin.right])
         .padding(0.1);
 
-      const y1 = d3
+      const y = d3
         .scaleLinear()
         .domain([0, d3.max(data, (d) => d.count)])
-        .rangeRound([height - margin.bottom, margin.top]);
+        .rangeRound([height, margin.top]);
 
       const xAxis = (g) =>
-        g
-          .attr("transform", `translate(0,${height - margin.bottom})`)
-          .call(d3.axisBottom(x));
+        g.attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
 
-      const y1Axis = (g) =>
+      const yAxis = (g) =>
         g
           .attr("transform", `translate(${margin.left},0)`)
           .style("color", "white")
-          .call(d3.axisLeft(y1))
+          .call(d3.axisLeft(y))
           .call((g) =>
             g
               .append("text")
-              //.attr("x", -margin.left)
-              //.attr("y", 10)
               .attr("fill", "white")
               .attr("text-anchor", "start")
-              .text(data.y1)
+              .text(data.y)
           );
 
       svg.select(".x-axis").call(xAxis);
-      svg.select(".y-axis").call(y1Axis);
+      svg.select(".y-axis").call(yAxis);
 
       svg
         .select(".plot-area")
@@ -50,11 +46,15 @@ function BarChart({ data }) {
         .selectAll(".bar")
         .data(data)
         .join("rect")
-        .attr("class", "bar")
-        .attr("x", (d) => x(d.dishes))
+        //.attr("class", "bar")
+        .attr("height", (d) => 0)
         .attr("width", x.bandwidth())
-        .attr("y", (d) => y1(d.count))
-        .attr("height", (d) => y1(0) - y1(d.count));
+        .attr("x", (d) => x(d.dishes))
+        .attr("y", (d) => height)
+        .transition()
+        .duration(700)
+        .attr("y", (d) => y(d.count))
+        .attr("height", (d) => height - y(d.count));
     },
     [data.length]
   );
@@ -63,10 +63,8 @@ function BarChart({ data }) {
     <svg
       ref={ref}
       style={{
-        height: 500,
-        width: "100%",
-        marginRight: "0px",
-        marginLeft: "0px",
+        height: 600,
+        width: 600,
       }}
     >
       <g className="plot-area" />
