@@ -40,19 +40,25 @@ function BarChart({ data }) {
       svg.select(".x-axis").call(xAxis);
       svg.select(".y-axis").call(yAxis);
 
+      const t = d3.transition().duration(700);
+      const widthTween = (d) => {
+        let i = d3.interpolate(0, x.bandwidth());
+        return function (t) {
+          return i(t);
+        };
+      };
+
       svg
         .select(".plot-area")
         .attr("fill", "steelblue")
         .selectAll(".bar")
         .data(data)
         .join("rect")
-        //.attr("class", "bar")
         .attr("height", (d) => 0)
-        .attr("width", x.bandwidth())
         .attr("x", (d) => x(d.dishes))
         .attr("y", (d) => height)
-        .transition()
-        .duration(700)
+        .transition(t)
+        .attrTween("width", widthTween)
         .attr("y", (d) => y(d.count))
         .attr("height", (d) => height - y(d.count));
     },
