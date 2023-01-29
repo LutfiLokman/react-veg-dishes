@@ -40,6 +40,24 @@ function BarChart({ data }) {
       svg.select(".x-axis").call(xAxis);
       svg.select(".y-axis").call(yAxis);
 
+      const tooltip = d3.select(".tooltip-area").style("opacity", 0);
+
+      const mouseover = (event, d) => {
+        tooltip.style("opacity", 1);
+      };
+
+      const mouseleave = (event, d) => {
+        // tooltip.style('opacity', 0);
+      };
+
+      const mousemove = (event, d) => {
+        const text = d3.select(".tooltip-area__text");
+        text.text(`Sales were ${d.count} in ${d.dishes}`);
+        const [x, y] = d3.pointer(event);
+
+        tooltip.attr("transform", `translate(${x}, ${y})`);
+      };
+
       const t = d3.transition().duration(700);
       const widthTween = (d) => {
         let i = d3.interpolate(0, x.bandwidth());
@@ -54,6 +72,9 @@ function BarChart({ data }) {
         .selectAll(".bar")
         .data(data)
         .join("rect")
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave)
+        .on("mouseover", mouseover)
         .attr("height", (d) => 0)
         .attr("x", (d) => x(d.dishes))
         .attr("y", (d) => height)
@@ -76,6 +97,9 @@ function BarChart({ data }) {
       <g className="plot-area" />
       <g className="x-axis" />
       <g className="y-axis" />
+      <g className="tooltip-area">
+        <text className="tooltip-area__text">aas</text>
+      </g>
     </svg>
   );
 }
