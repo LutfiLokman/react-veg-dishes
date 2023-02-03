@@ -40,14 +40,15 @@ function BarChart({ data }) {
       svg.select(".x-axis").call(xAxis);
       svg.select(".y-axis").call(yAxis);
 
-      const tooltip = d3.select(".tooltip-area").style("opacity", 0);
+      const tooltip = d3.select(".tooltip-area").style("opacity", 1);
 
-      const mouseover = (event, d) => {
-        tooltip.style("opacity", 1);
+      const mouseenter = (event, d) => {
+        const [x, y] = d3.pointer(event);
+        console.log(x, y);
       };
 
       const mouseleave = (event, d) => {
-        // tooltip.style('opacity', 0);
+        //tooltip.style("opacity", 0);
       };
 
       const mousemove = (event, d) => {
@@ -72,9 +73,6 @@ function BarChart({ data }) {
         .selectAll(".bar")
         .data(data)
         .join("rect")
-        .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave)
-        .on("mouseover", mouseover)
         .attr("height", (d) => 0)
         .attr("x", (d) => x(d.dishes))
         .attr("y", (d) => height)
@@ -82,6 +80,12 @@ function BarChart({ data }) {
         .attrTween("width", widthTween)
         .attr("y", (d) => y(d.count))
         .attr("height", (d) => height - y(d.count));
+
+      svg
+        .selectAll("rect")
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave)
+        .on("mouseenter", mouseenter);
     },
     [data.length]
   );
