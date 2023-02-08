@@ -40,25 +40,6 @@ function BarChart({ data }) {
       svg.select(".x-axis").call(xAxis);
       svg.select(".y-axis").call(yAxis);
 
-      const tooltip = d3.select(".tooltip-area").style("opacity", 1);
-
-      const mouseenter = (event, d) => {
-        const [x, y] = d3.pointer(event);
-        console.log(x, y);
-      };
-
-      const mouseleave = (event, d) => {
-        //tooltip.style("opacity", 0);
-      };
-
-      const mousemove = (event, d) => {
-        const text = d3.select(".tooltip-area__text");
-        text.text(`Sales were ${d.count} in ${d.dishes}`);
-        const [x, y] = d3.pointer(event);
-
-        tooltip.attr("transform", `translate(${x}, ${y})`);
-      };
-
       const t = d3.transition().duration(700);
       const widthTween = (d) => {
         let i = d3.interpolate(0, x.bandwidth());
@@ -73,6 +54,7 @@ function BarChart({ data }) {
         .selectAll(".bar")
         .data(data)
         .join("rect")
+        .attr("style", "outline: steelblue")
         .attr("height", (d) => 0)
         .attr("x", (d) => x(d.dishes))
         .attr("y", (d) => height)
@@ -81,11 +63,29 @@ function BarChart({ data }) {
         .attr("y", (d) => y(d.count))
         .attr("height", (d) => height - y(d.count));
 
+      function handleClick() {
+        const target = d3.select(this);
+        const currentBorder = target.style("outline");
+        if (currentBorder == "steelblue") {
+          target.attr("style", "outline: solid white");
+        } else {
+          target.attr("style", "outline: steelblue");
+        }
+      }
+
+      function handleMouseOver() {
+        d3.select(this).attr("fill", "lightblue");
+      }
+
+      function handleMouseLeave() {
+        d3.select(this).attr("fill", "steelblue");
+      }
+
       svg
         .selectAll("rect")
-        .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave)
-        .on("mouseenter", mouseenter);
+        .on("mouseover", handleMouseOver)
+        .on("mouseleave", handleMouseLeave)
+        .on("click", handleClick);
     },
     [data.length]
   );
@@ -101,9 +101,6 @@ function BarChart({ data }) {
       <g className="plot-area" />
       <g className="x-axis" />
       <g className="y-axis" />
-      <g className="tooltip-area">
-        <text className="tooltip-area__text">aas</text>
-      </g>
     </svg>
   );
 }
